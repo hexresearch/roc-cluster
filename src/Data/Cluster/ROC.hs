@@ -15,6 +15,12 @@ module Data.Cluster.ROC(
   , loadROCContext
   , rocPrototypes
   , clusterize
+  -- * Fine grain API
+  , clusterizeAddMerge
+  , clusterizeSingle
+  , clusterizeMerge
+  , clusterizeNewPrototype
+  , clusterizePostprocess
   ) where
 
 import Data.Data
