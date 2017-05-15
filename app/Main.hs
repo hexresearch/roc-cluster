@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import Data.Cluster.ROC
 
 main :: IO ()
-main = someFunc
+main = pure ()
