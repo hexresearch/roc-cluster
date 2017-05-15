@@ -74,7 +74,7 @@ class ClusterSpace a where
 data Prototype a = Prototype {
   prototypeValue  :: !a
 , prototypeWeight :: !Double
-} deriving (Generic, Functor)
+} deriving (Eq, Show, Generic, Functor)
 
 instance ClusterSpace a => Monoid (Prototype a) where
   mempty = Prototype pointZero 0
@@ -140,9 +140,12 @@ clusterizeSingle x ctx@ROCContext{..}
     where
     winnerIndex = V.minIndex . fmap (pointDistanceSquared x . prototypeValue) $ cntxPrototypes
     winner = cntxPrototypes V.! winnerIndex
-    winner' = let Prototype{..} = winner in Prototype
-      (prototypeValue `pointAdd` ( (1 / prototypeWeight) `pointScale` (x `pointAdd` pointScale (-1) prototypeValue) ))
-      (prototypeWeight + pointKernel x prototypeValue)
+    winner' = let
+         Prototype{..} = winner
+         сwinner = prototypeWeight + pointKernel x prototypeValue
+         ywinner = prototypeValue `pointAdd` ( (1 / сwinner) `pointScale` (x `pointAdd` pointScale (-1) prototypeValue) )
+      in Prototype ywinner сwinner
+
 {-# INLINE clusterizeSingle #-}
 
 -- | Merge the most closest clusters (step 4 in original paper).
@@ -182,5 +185,5 @@ clusterizePostprocess :: forall a . (ClusterSpace a)
 clusterizePostprocess ctx@ROCContext{..} = ctx { cntxPrototypes = V.filter isValuable cntxPrototypes }
   where
     threshold = rocThreshold cntxConfig
-    isValuable p = prototypeWeight p > threshold
+    isValuable p = prototypeWeight p >= threshold
 {-# INLINE clusterizePostprocess #-}
