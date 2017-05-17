@@ -1,7 +1,7 @@
 name:                roc-cluster-demo
 version:             0.1.0.0
--- synopsis:
--- description:
+synopsis:            Gloss interactive demo for roc-cluster package
+description:         Demo for displaying operation of ROC online clustering.
 homepage:            https://github.com/ncrashed/roc-cluster-demo#readme
 license:             BSD3
 license-file:        LICENSE
