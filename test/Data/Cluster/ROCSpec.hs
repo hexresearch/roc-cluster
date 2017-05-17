@@ -2,12 +2,20 @@ module Data.Cluster.ROCSpec(
     spec
   ) where
 
+import Data.Cluster.ROC
+import Data.List (nub)
 import Test.Hspec
 import Test.HUnit
-import Data.Cluster.ROC
 
+-- | Config without threshold
 cfg :: ROCConfig
 cfg = defaultROCConfig
+
+-- | Config with threshold
+cfg' :: ROCConfig
+cfg' = defaultROCConfig {
+    rocThreshold = 0.1
+  }
 
 data Vec2 = Vec2 !Double !Double
   deriving (Eq, Show)
@@ -32,7 +40,10 @@ spec = do
     assertEqual "should be empty" [] $ rocPrototypes cntx
   it "Handle single clusterization" $ do
     let cntx :: ROCContext Vec2 = clusterize [Vec2 0 0] $ emptyROCContext cfg
-    assertEqual "should be empty" [] $ rocPrototypes cntx
+    assertEqual "should be empty" [newPrototype (Vec2 0 0)] $ rocPrototypes cntx
   it "Handle simple clusterization" $ do
     let cntx :: ROCContext Vec2 = clusterize [Vec2 0 0, Vec2 0.1 0] $ emptyROCContext cfg
-    assertEqual "should be empty" [] $ rocPrototypes cntx
+    assertBool "should be 2 clusters" $ length (nub $ rocPrototypes cntx) == 2
+  it "Handle simple clusterization with postprocess" $ do
+    let cntx :: ROCContext Vec2 = clusterize [Vec2 0 0, Vec2 0.1 0] $ emptyROCContext cfg'
+    assertBool "should be 2 clusters" $ length (nub $ rocPrototypes cntx) == 1

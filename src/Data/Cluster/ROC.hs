@@ -6,6 +6,7 @@ module Data.Cluster.ROC(
   , defaultROCConfig
   -- * Cluster definition
   , Prototype
+  , newPrototype
   , prototypeValue
   , prototypeWeight
   -- * API
@@ -75,6 +76,10 @@ data Prototype a = Prototype {
   prototypeValue  :: !a
 , prototypeWeight :: !Double
 } deriving (Eq, Show, Generic, Functor)
+
+-- | Create prototype with given point as center and zero weight
+newPrototype :: a -> Prototype a
+newPrototype a = Prototype a 0
 
 instance ClusterSpace a => Monoid (Prototype a) where
   mempty = Prototype pointZero 0
